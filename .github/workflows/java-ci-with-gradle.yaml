@@ -61,8 +61,9 @@ jobs:
           ARTIFACT_ID: ${{ needs.build.outputs.artifact-id }}
         run: |
           echo "Artifact ID from previous job is $ARTIFACT_ID"
-          ssh "$SSH_REMOTE_USER" -p 22 \
-          curl -L \
-          -H 'Accept: application/json' \
-          -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-          https://api.github.com/repos/${{ github.repository }}/actions/artifacts/"$ARTIFACT_ID"
+          ssh "$SSH_REMOTE_USER" -p 22 << EOF
+            curl -L \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID"
+          EOF
