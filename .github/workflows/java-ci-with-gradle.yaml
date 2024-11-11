@@ -57,12 +57,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - env:
-          SSH_REMOTE_USER: ${{ vars.SSH_REMOTE_USER }}
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/production_key
+          chmod 600 ~/.ssh/production_key
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+          
+      - name: Deploy artifact to server
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
           ARTIFACT_ID: ${{ needs.build.outputs.artifact-id }}
         run: |
-          echo "Artifact ID from previous job is $ARTIFACT_ID"
-          ssh "$SSH_REMOTE_USER" -p 22 << EOF
+          ssh -i ~/.ssh/production_key -o StrictHostKeyChecking=no "$SSH_USER"@"$SSH_HOST" << EOF
             curl -L \
             -H "Accept: application/json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
