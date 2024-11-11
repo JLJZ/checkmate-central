@@ -59,7 +59,7 @@ jobs:
       - env:
           SSH_REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
           ARTIFACT_ID: ${{needs.build.outputs.artifact-id}}
-      - run: |
+        run: |
           echo "Artifact ID from previous job is $ARTIFACT_ID"
           ssh "$SSH_REMOTE_USER" -p 22 \
           curl -L \
