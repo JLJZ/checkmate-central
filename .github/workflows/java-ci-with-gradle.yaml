@@ -70,9 +70,8 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           ARTIFACT_ID: ${{ needs.build.outputs.artifact-id }}
         run: |
-          COMMAND="curl -L
-          -H Accept: application/vnd.github+json
-          -H Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}
-          https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"
-          ssh -i ~/.ssh/production_key -o StrictHostKeyChecking=no -- "$SERVER_USER@$SERVER_HOST" "$COMMAND"
-  
+          ssh -i ~/.ssh/production_key -o StrictHostKeyChecking=no -- "$SERVER_USER@$SERVER_HOST" \
+          "curl -L" \
+          -H Accept: application/vnd.github+json" \
+          -H Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"  
